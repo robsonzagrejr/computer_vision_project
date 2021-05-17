@@ -8,6 +8,7 @@ import skimage.viewer as skiv
 from matplotlib import pyplot as plt
 import glob
 import joblib
+import pickle
 
 seed = 72
 
@@ -17,7 +18,7 @@ def read_image(file_dir, target):
     return {'image': img, 'target': target}
 
 
-def load_data():
+def create_data():
     df = pd.DataFrame(columns = ['image', 'target'])
     target = 'non-vehicle'
     non_vehicles_files = glob.glob(f'data/non-vehicles/**/*.png', recursive=True)
@@ -27,8 +28,15 @@ def load_data():
     vehicles_files = glob.glob(f'data/vehicles/**/*.png', recursive=True)
     vehicles_data = joblib.Parallel(n_jobs=-1)(joblib.delayed(read_image)(f, target) for f in vehicles_files)
     df = df.append(vehicles_data, ignore_index=True)
+    
+    #shuffle
+    df = df.sample(frac=1, random_state=seed).reset_index(drop=True)
+    pickle.dump(df, open('data/data.pkl', 'wb'))
     return df
 
+
+def load_data():
+    return pickle.load(open('data/data.pkl', 'rb'))
 
 
 def split_train_test(df):
