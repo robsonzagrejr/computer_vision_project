@@ -1,0 +1,61 @@
+===========TEST GAME CLASSIC MODEL===========
+Model-> 0.0004630088806152344
+Feature time-> 2.1721785068511963
+Time: 5.376555442810059
+
+Normal JOBLIB->
+===========TEST GAME CLASSIC MODEL===========
+Model-> 0.0010874271392822266
+Chunk time-> 1.946840763092041
+Features time-> 2.984835147857666
+Model time-> 0.0015730857849121094
+Time: 5.563061237335205
+
+Normal Python ->
+===========TEST GAME CLASSIC MODEL===========
+Model-> 0.0007908344268798828
+Chunk time-> 0.0010409355163574219
+Features time-> 1.6045668125152588
+Model time-> 0.0019655227661132812
+Time: 2.2636146545410156
+
+Normal Joblib 2 ->
+===========TEST GAME CLASSIC MODEL===========
+Model-> 0.0
+Chunk time-> 0.00046372413635253906
+Features time-> 3.9719419479370117
+Model time-> 0.0017921924591064453
+Time: 4.630833625793457
+
+Normal Multiprocess
+===========TEST GAME CLASSIC MODEL===========
+Model-> 0.0009975433349609375
+Chunk time-> 0.0
+Features time-> 4.975206136703491
+Model time-> 0.0030324459075927734
+Time: 5.600407600402832
+
+============= Sem chamada de funcao===========
+===========TEST GAME CLASSIC MODEL===========
+Model-> 0.0
+Chunk time-> 0.0
+Features time-> 1.5621812343597412
+Model time-> 0.0019991397857666016
+Time: 2.189927577972412
+
+Colocando menos chamadas de funcao
+===========TEST GAME CLASSIC MODEL===========
+Model-> 0.0
+Chunk time-> 0.009973764419555664
+Features time-> 0.0
+Model time-> 0.0009961128234863281
+Time: 1.2932569980621338
+
+A good otimization
+===========TEST GAME CLASSIC MODEL===========
+Model-> 0.0
+Transform time-> 0.17652606964111328
+Chunk time-> 0.013963460922241211
+Features time-> 0.0
+Model time-> 0.002997875213623047
+Time: 1.6827313899993896

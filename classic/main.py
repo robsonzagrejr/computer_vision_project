@@ -1,3 +1,4 @@
+from numpy import dtype, float32
 import classic.data as cdata
 import classic.features as cfeatures
 import classic.model as cmodel
