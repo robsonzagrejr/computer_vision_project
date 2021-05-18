@@ -40,36 +40,17 @@ class ClassicPredictor():
         self.windows = windows_chunks
 
 
-    def transform_img(self, img):
-        #img = skic.rgba2rgb(img)
-        img = ski.img_as_float32(img)
-        img = skit.resize(img, img_size, anti_aliasing=True)
-        img = skif.gaussian(img, sigma=1.2, cval=0.4, multichannel=True)
-        return 
-
-
-    def predict_chunk(self, img_c):
-        img_c = skit.resize(img_c, (64,64), anti_aliasing=True)
-        params = {
-            'X': [img_c],
-            'train': False,
-            **self.best_params
-        }
-        features = f.pipeline(**params)
-        y_pred = self.model.predict(features)
-        return y_pred
-
-
-    def predict(self, image):
-        start_t = time.time()
+    def predict(self, image, show_find=False):
+        #start_t = time.time()
         image_recize = skit.resize(image, img_size, anti_aliasing=True)
+        image_show=image_recize.copy()
         image_r = image_recize[top:bottom,:,:]
         image_r = ski.img_as_float32(image_r)
         image_t = skif.gaussian(image_r, sigma=2, cval=0.4, multichannel=True)
-        end_t = time.time()
-        print(f'Transform time-> {end_t-start_t}')
+        #end_t = time.time()
+        #print(f'Transform time-> {end_t-start_t}')
 
-        start_t = time.time()
+        #start_t = time.time()
         features = []
         color_type = self.best_params['color_type']
         bins = self.best_params['bins']
@@ -90,7 +71,6 @@ class ClassicPredictor():
             f_histogram_2 = np.histogram(img[:,:,2], bins=bins, range=(0,256))
             #f_histogram = np.concatenate((f_histogram_0[0],f_histogram_1[0],f_histogram_2[0]))
             end_t = time.time()
-            #print(f'Hist time-> {end_t-start_t}')
             start_t = time.time()
             f_hog_0 = hog(
                 img[:,:,0],
@@ -125,17 +105,20 @@ class ClassicPredictor():
             features.append(np.concatenate((f_histogram_0[0], f_histogram_1[0], f_histogram_2[0], f_hog_0, f_hog_1, f_hog_2)))
         X_scaler = pickle.load(open(x_scalar_path, 'rb'))
         scaled_X = X_scaler.transform(features)
-        end_t = time.time()
-        print(f'Chunk/Features time-> {end_t-start_t}')
+        #end_t = time.time()
+        #print(f'Chunk/Features time-> {end_t-start_t}')
         
-        start_t = time.time()
+        #start_t = time.time()
         y_pred = self.model.predict_proba(scaled_X)
         car_chunks = []
         for i in np.where(y_pred[:,1] >= 0.8)[0]:
             car_chunks.append(self.windows[i])
-        end_t = time.time()
-        print(f'Model time-> {end_t-start_t}')
-        return car_chunks, image_recize
+            if show_find:
+                start, end = self.windows[i]
+                cv2.rectangle(image_show, (start[1], start[0]), (end[1], end[0]), (255,0,0), 2)
+        #end_t = time.time()
+        #print(f'Model time-> {end_t-start_t}')
+        return car_chunks, image_recize, image_show
 
     
     def define_windows(self, scale, bottom):

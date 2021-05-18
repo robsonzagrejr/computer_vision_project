@@ -1,5 +1,5 @@
 
-img_size = (480,852)
+img_size = (480,640)
 top = int(img_size[0]*0.3)
 bottom = int(img_size[0]*0.95)
 seed = 72

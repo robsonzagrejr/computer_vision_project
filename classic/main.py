@@ -35,8 +35,6 @@ def test_simple_classic_model():
 
 def test_game_classic_model():
     print("===========TEST GAME CLASSIC MODEL===========")
-    #model = cmodel.load_model()
-    #best_params = cmodel.define_best_params('', '', search=False)
     img = []
     img.append(skio.imread('data/game/image/img1.png'))
     # img.append(skio.imread('data/game/image/img2.png'))
@@ -46,21 +44,18 @@ def test_game_classic_model():
     
     predictor = cpredictor.ClassicPredictor()
 
-    start = time.time()
+    #start = time.time()
     #joblib.Parallel(n_jobs=4)(joblib.delayed(predictor.predict)(i) for i in img)
     car_chunks = []
     images = []
     for i in img:
-        car_chunk, image = predictor.predict(i)
+        car_chunk, image, image_s = predictor.predict(i, show_find=True)
         car_chunks.append(car_chunk)
-        images.append(image)
-    end = time.time()
-    print(f"Class Time: {end - start}")
-    for i in range(len(car_chunks)):
-        for window in car_chunks[i]:
-            #img_c = img[i][[0]:window[1][0], window[0][1]:window[1][1],:]
-            start, end = window
-            cv2.rectangle(images[i], (start[1], start[0]), (end[1], end[0]), (255,0,0,1), 2)
+        images.append(image_s)
+    #end = time.time()
+    
+    #print(f"Class Time: {end - start}")
     for i in images:
-        skio.imshow(i)
-        plt.show()
+        skio.imshow(i)  
+        skio.show()
+
