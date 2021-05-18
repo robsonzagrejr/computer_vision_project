@@ -6,6 +6,15 @@ from skimage.feature import hog
 from sklearn.preprocessing import StandardScaler
 import cv2
 import joblib
+import pickle
+
+import skimage.io as skio
+
+import matplotlib.pyplot as plt
+from classic.config import (
+    x_scalar_path
+)
+
 
 ski_color_change = {
     "RGB": lambda img: img,
@@ -32,8 +41,8 @@ def get_hog_fatures(img, orient, pix_per_cell, cell_per_block, channel=0,
 
 def img_feature(img, color_type='HSL', orient=9, pix_per_cell=8, cell_per_block=2,
                     block_norm='L1', transform_sqrt=True, bins=32):
+    
     img_color = ski_color_change[color_type](img)
-
     f_histogram_0 = np.histogram(img_color[:,:,0], bins=bins, range=(0,256))
     f_histogram_1 = np.histogram(img_color[:,:,1], bins=bins, range=(0,256))
     f_histogram_2 = np.histogram(img_color[:,:,2], bins=bins, range=(0,256))
@@ -55,9 +64,9 @@ def img_feature(img, color_type='HSL', orient=9, pix_per_cell=8, cell_per_block=
     features =  np.concatenate((f_histogram, f_hog_0, f_hog_1, f_hog_2))
     return features
 
-X_scaler = StandardScaler()
+
 def pipeline(X, color_type='HSL', orient=9, pix_per_cell=8, cell_per_block=2,
-                block_norm='L1', transform_sqrt=True, bins=32, train=True): 
+                block_norm='L1', transform_sqrt=True, bins=32, train=True):
     features=joblib.Parallel(n_jobs=-1)(
             joblib.delayed(img_feature)(
                 image,
@@ -68,9 +77,15 @@ def pipeline(X, color_type='HSL', orient=9, pix_per_cell=8, cell_per_block=2,
                 block_norm,
                 transform_sqrt,
                 bins                     
-            ) for image in X['image'].values
+            ) for image in X
         )
+
     if train:
         X_scaler = StandardScaler().fit(features)
+        pickle.dump(X_scaler,  open(x_scalar_path, 'wb'))
+    else:
+        X_scaler = pickle.load(open(x_scalar_path, 'rb'))
+
     scaled_X = X_scaler.transform(features)
     return scaled_X
+

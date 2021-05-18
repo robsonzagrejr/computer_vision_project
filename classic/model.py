@@ -1,15 +1,21 @@
 import pandas as pd
 import numpy as np
-from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
 import pickle
 import joblib
 import json
+import time
 
 import classic.features as f
+from classic.config import (
+    seed,
+    params_path,
+    model_path,
+)
 
-seed = 72
 class CustomSGDClassifier(SGDClassifier):
 
     def __init__(self, color_type='HSL', orient=9, pix_per_cell=8, cell_per_block=2,
@@ -86,7 +92,7 @@ def search_for_good_pipe_params(X_train, y_train):
     modelgscv = GridSearchCV(model, parameters, n_jobs=-1, refit=True, return_train_score=True)
     #Look just for a part because of computer complexit and RAM
     modelgscv.fit(X_train.iloc[0:50], y_train.iloc[0:50])
-    with open('data/feature/best_param.json', 'w', encoding='utf-8') as f:
+    with open(params_path, 'w', encoding='utf-8') as f:
         json.dump(modelgscv.best_params_, f, ensure_ascii=False, indent=4)
     return modelgscv.best_params_
 
@@ -122,46 +128,41 @@ def train_model(X_train, y_train, search=False):
     best_params = define_best_params(X_train, y_train, search)
     model = define_model()
     
-    #base_index = 0
-    #index = 1000
-    #bach = 0
     ROUNDS = 20
     for bach in range(ROUNDS):
         print(f"Training Epoch {bach}")
         batcherator = batch(X_train, y_train, 10)
         for index, (chunk_X, chunk_y) in enumerate(batcherator):
             train_params = {
-                'X': chunk_X,
+                'X': chunk_X['image'].values,
                 **best_params
             }
             chunk_X_n = f.pipeline(**train_params)
             pd.DataFrame(chunk_X_n).to_csv(f'data/feature/x_train_n_{bach}.csv')
             model.partial_fit(chunk_X_n, chunk_y, classes=[0, 1])
-    # while index < len(X_train):
-    #     print(f"Training Epoch {bach}")
-    #     train_params = {
-    #         'X': X_train.iloc[base_index:index],
-    #         **best_params
-    #     }
-    #     X_train_n = f.pipeline(**train_params)
-    #     pd.DataFrame(X_train_n).to_csv(f'data/feature/x_train_n_{bach}.csv')
-    #     model.partial_fit(X_train_n, y_train.iloc[base_index:index])
-
-    #     base_index = index
-    #     index += 1000
-    #     bach += 1
-    # if base_index < len(X_train):
-    #     print(f"Training Epoch {bach}")
-    #     train_params = {
-    #         'X': X_train.iloc[base_index:],
-    #         **best_params
-    #     }
-    #     X_train_n = f.pipeline(**train_params)
-    #     pd.DataFrame(X_train_n).to_csv(f'data/feature/x_train_n_{bach}.csv')
-    #     model.partial_fit(X_train_n, y_train.iloc[base_index:])
-
-    pickle.dump(model, open('data/model/hog_sgd_model.pkl', 'wb'))
-    return model
+    
+    pickle.dump(model, open(model_path, 'wb'))
+    return model, best_params
 
 
+def load_model():
+    return pickle.load(open(model_path, 'rb'))
 
+
+def test_model(model, X_test, y_test):
+    print("Test Model...")
+    start = time.time()
+
+    best_params = json.load(open(params_path,'r'))
+    test_params = {
+        'X': X_test['image'].values,
+        'train':False,
+        **best_params
+    }
+    X_test_n = f.pipeline(**test_params) 
+    y_pred = model.predict(X_test_n)  
+    end = time.time()
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Accuracy: {accuracy}")
+    print(f"Time: {end - start}")
+    return accuracy

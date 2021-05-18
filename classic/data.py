@@ -3,14 +3,15 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import skimage as ski
 import skimage.io as skio
-import skimage.viewer as skiv
 
-from matplotlib import pyplot as plt
 import glob
 import joblib
 import pickle
 
-seed = 72
+from classic.config import (
+    seed,
+    data_path
+)
 
 
 def read_image(file_dir, target):
@@ -31,12 +32,12 @@ def create_data():
     
     #shuffle
     df = df.sample(frac=1, random_state=seed).reset_index(drop=True)
-    pickle.dump(df, open('data/data.pkl', 'wb'))
+    pickle.dump(df, open(data_path, 'wb'))
     return df
 
 
 def load_data():
-    return pickle.load(open('data/data.pkl', 'rb'))
+    return pickle.load(open(data_path, 'rb'))
 
 
 def split_train_test(df):
