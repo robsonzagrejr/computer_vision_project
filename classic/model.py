@@ -130,9 +130,11 @@ def train_model(X_train, y_train, search=False):
     
     ROUNDS = 20
     for bach in range(ROUNDS):
+        
+        start = time.time()
         print(f"Training Epoch {bach}")
         batcherator = batch(X_train, y_train, 10)
-        for index, (chunk_X, chunk_y) in enumerate(batcherator):
+        for _, (chunk_X, chunk_y) in enumerate(batcherator):
             train_params = {
                 'X': chunk_X['image'].values,
                 **best_params
@@ -140,6 +142,9 @@ def train_model(X_train, y_train, search=False):
             chunk_X_n = f.pipeline(**train_params)
             pd.DataFrame(chunk_X_n).to_csv(f'data/feature/x_train_n_{bach}.csv')
             model.partial_fit(chunk_X_n, chunk_y, classes=[0, 1])
+        
+        end = time.time()
+        print(f'Time -> {end - start}')
     
     pickle.dump(model, open(model_path, 'wb'))
     return model, best_params

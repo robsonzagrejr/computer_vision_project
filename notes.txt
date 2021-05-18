@@ -59,3 +59,27 @@ Chunk time-> 0.013963460922241211
 Features time-> 0.0
 Model time-> 0.002997875213623047
 Time: 1.6827313899993896
+
+Class vs Functional
+===========TEST GAME CLASSIC MODEL===========
+Transform time-> 0.20644545555114746
+Transform time-> 0.2154226303100586
+Transform time-> 0.19448113441467285
+Chunk/Features time-> 0.013523101806640625
+Model time-> 0.0019965171813964844
+Chunk/Features time-> 0.014026403427124023
+Model time-> 0.001995563507080078
+Chunk/Features time-> 0.011982917785644531
+Model time-> 0.0019943714141845703
+Class Time: 5.2584264278411865
+
+Transform time-> 0.28024983406066895
+Transform time-> 0.2962074279785156
+Chunk and Features time-> 1.6229684352874756
+Model time-> 0.0030312538146972656
+Chunk and Features time-> 1.6529908180236816
+Model time-> 0.005038738250732422
+Transform time-> 0.20348143577575684
+Chunk and Features time-> 1.1130917072296143
+Model time-> 0.002991199493408203
+Time: 3.8790152072906494
