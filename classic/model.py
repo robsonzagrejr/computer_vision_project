@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import SGDClassifier
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
@@ -27,7 +28,7 @@ class CustomSGDClassifier(SGDClassifier):
         self.block_norm = block_norm
         self.transform_sqrt = transform_sqrt
         self.bins = bins
-        SGDClassifier.__init__(self)
+        SGDClassifier.__init__(self,loss='modified_huber')
 
 
     def transform(self, X, y):
@@ -113,7 +114,7 @@ def define_best_params(X_train, y_train, search=False):
 
 
 def define_model():
-    return SGDClassifier()
+    return SGDClassifier(loss='modified_huber')
 
 
 def batch(iterable_X, iterable_y, n=1):
@@ -122,27 +123,32 @@ def batch(iterable_X, iterable_y, n=1):
         yield iterable_X[ndx:min(ndx + n, l)], iterable_y[ndx:min(ndx + n, l)]
 
 
-def train_model(X_train, y_train, search=False):
+def train_model(X_train, y_train, search=False, features=True):
     print("Model ...")
     print("Define Best Params")
     best_params = define_best_params(X_train, y_train, search)
     model = define_model()
     
-    ROUNDS = 20
+    ROUNDS = 1
     for bach in range(ROUNDS):
-        
+        chunk = 0
         start = time.time()
-        print(f"Training Epoch {bach}")
-        batcherator = batch(X_train, y_train, 10)
+        batcherator = batch(X_train, y_train, 1000)
         for _, (chunk_X, chunk_y) in enumerate(batcherator):
-            train_params = {
-                'X': chunk_X['image'].values,
-                **best_params
-            }
-            chunk_X_n = f.pipeline(**train_params)
-            pd.DataFrame(chunk_X_n).to_csv(f'data/feature/x_train_n_{bach}.csv')
+            
+            print(f"Training Chunk {chunk}")
+            chunk_X_n = None
+            if features:
+                train_params = {
+                    'X': chunk_X['image'].values,
+                    **best_params
+                }
+                chunk_X_n = f.pipeline(**train_params)
+                pd.DataFrame(chunk_X_n).to_csv(f'data/feature/x_train_n_{bach}.csv')
+            else:
+                chunk_X_n = pd.read_csv(f'data/feature/x_train_n_{bach}.csv')
             model.partial_fit(chunk_X_n, chunk_y, classes=[0, 1])
-        
+            chunk += 1
         end = time.time()
         print(f'Time -> {end - start}')
     

@@ -6,6 +6,8 @@ import cv2
 import pickle
 import skimage.transform as skit
 
+import skimage as ski
+
 from classic.config import (
     x_scalar_path
 )
@@ -39,8 +41,8 @@ def pipeline(X, color_type='HSL', orient=9, pix_per_cell=8, cell_per_block=2,
     features = []
     for image in X:
         # Resize to 64x64
-        img = skit.resize(image, (64,64), anti_aliasing=True)
-
+        #img = skit.resize(image, (64,64), anti_aliasing=True)
+        img = ski.img_as_float32(image)
         # Change color
         img_color = ski_color_change[color_type](img)
 

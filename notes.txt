@@ -83,3 +83,14 @@ Transform time-> 0.20348143577575684
 Chunk and Features time-> 1.1130917072296143
 Model time-> 0.002991199493408203
 Time: 3.8790152072906494
+
+Acutally whatever
+
+
+
+===========TEST CLASSIC MODEL===========
+Loading data...
+Split data...
+Test Model...
+Accuracy: 0.9769663879883979
+Time: 36.590301275253296
