@@ -4,7 +4,7 @@ import skimage.filters as skif
 import skimage.color as skic
 import skimage as ski
 import cv2
-import numpy as np 
+import joblib
 
 import pickle
 import json
@@ -50,22 +50,25 @@ class ClassicPredictor():
 
 
     def predict(self, image):
-        image_c = ski.img_as_ubyte(image)
         image_t = self.transform_img(image)
         
         def _predict_chunk(window):
+            print(window)
             start, end = window
             y_pred = self.predict_chunk(image_t[start[0]:end[0], start[1]:end[1],:].copy())
             if y_pred:
                 print(f"CAR IN -> {start}, {end}")
-                skio.imshow(image_t[start[0]:end[0], start[1]:end[1],:])
-                plt.show()
-                #    cv2.rectangle(image_c, (start[1], start[0]), (end[1], end[0]), (255,0,0), 2)
+                #skio.imshow(image_t[start[0]:end[0], start[1]:end[1],:])
+                #plt.show()
+                #cv2.rectangle(image, (start[1], start[0]), (end[1], end[0]), (255,0,0), 2)
                 
-        for window in self.windows:
-            print(window)
-            _predict_chunk(window)
-        return image_c
+        features=joblib.Parallel(n_jobs=-1)(
+            joblib.delayed(_predict_chunk)(
+                window                
+            ) for window in self.windows
+        )
+
+        return image
 
 
     def define_windows(self, scale, bottom, draw=False, color=(255,0,0), line_size=5, img=None):

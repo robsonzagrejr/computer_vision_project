@@ -6,6 +6,8 @@ import skimage.io as skio
 
 import matplotlib.pyplot as plt
 
+import time
+
 
 def create_classic_model():
     print("===========TRAIN CLASSIC MODEL===========")
@@ -31,6 +33,10 @@ def test_game_classic_model():
     print("===========TEST GAME CLASSIC MODEL===========")
     img = skio.imread('data/game/image/img2.png')
     predictor = cpredictor.ClassicPredictor()
+    
+    start = time.time()
     img_p = predictor.predict(img)
+    end = time.time()
+    print(f"Time: {end - start}")
     skio.imshow(img_p)
     plt.show()
