@@ -6,5 +6,5 @@ if __name__ == '__main__':
     #test_simple_classic_model()
     #cmain.test_simple_classic_model()
     #cmain.test_game_classic_model()
-    imain.predict_webcam(device=1)
+    imain.predict_webcam(device=1, classic_mode=False)
     #imain.list()
