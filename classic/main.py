@@ -37,10 +37,10 @@ def test_game_classic_model():
     print("===========TEST GAME CLASSIC MODEL===========")
     img = []
     img.append(skio.imread('data/game/image/img1.png'))
-    # img.append(skio.imread('data/game/image/img2.png'))
-    # img.append(skio.imread('data/game/image/img3.png'))
-    # img.append(skio.imread('data/game/image/img4.png'))
-    # img.append(skio.imread('data/game/image/img5.png'))
+    img.append(skio.imread('data/game/image/img2.png'))
+    img.append(skio.imread('data/game/image/img3.png'))
+    img.append(skio.imread('data/game/image/img4.png'))
+    img.append(skio.imread('data/game/image/img5.png'))
     
     predictor = cpredictor.ClassicPredictor()
 
