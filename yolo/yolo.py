@@ -61,19 +61,18 @@ class Yolo():
                     classes_id.append(class_id)
                     confidences.append(float(confidence))
         indices = cv2.dnn.NMSBoxes(bbox, confidences, conf_threshold, nms_threshold)
-        bbox = [bbox[i[0]] for i in indices]
-        classes_id = [classes_id[i[0]] for i in indices]
-        confidences = [confidences[i[0]] for i in indices]
+        #bbox = [bbox[i[0]] for i in indices]
+        #classes_id = [classes_id[i[0]] for i in indices]
+        #confidences = [confidences[i[0]] for i in indices]
 
-        aux = 0
         if show_find:
-            for box in bbox:
-                x, y, w, h = box
-                cv2.rectangle(image, (x,y), (x+w, y+h), self.class_colors[aux], 2)
-                cv2.putText(image, f"{self.class_names[aux]} {round(confidences[aux],2)}%", 
-                    (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self.class_colors[aux], 2
+            for i in indices:
+                i = i[0]
+                x, y, w, h = bbox[i]
+                class_id = classes_id[i]
+                cv2.rectangle(image, (x,y), (x+w, y+h), self.class_colors[class_id], 2)
+                cv2.putText(image, f"{self.class_names[class_id]} {round(confidences[i],2)}%", 
+                    (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, self.class_colors[class_id], 2
                 )
-                aux += 1
-
 
         return bbox, classes_id, confidences, image

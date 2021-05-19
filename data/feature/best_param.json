@@ -1,0 +1,9 @@
+{
+    "bins": 16,
+    "block_norm": "L2",
+    "cell_per_block": 2,
+    "color_type": "HSL",
+    "orient": 7,
+    "pix_per_cell": 8,
+    "transform_sqrt": false
+}
